@@ -97,7 +97,6 @@ The model reached 2nd place in the [CVPR 2024 CARLA challenge](https://opendrive
 A [technical report](https://arxiv.org/abs/2412.09602) is available on ArXiv, which describes the changes and has some analysis on changes and the DS metric.
 The model is released in this repository.
 This model was created as part of a master thesis project which describes the approach in more depth.
-TransFuser v5 is, at the time of writing (Feb.2025), the best open-source model for the CARLA leaderboard 2.0 benchmarks.
 ```BibTeX
 @article{Zimmerlin2024ArXiv,
   author       = {Julian Zimmerlin and
@@ -117,5 +116,31 @@ TransFuser v5 is, at the time of writing (Feb.2025), the best open-source model 
   school={University of Tübingen},
   howpublished={\textsc{url:}~\url{https://kashyap7x.github.io/assets/pdf/students/Zimmerlin2024.pdf}},
   year={2024}
+}
+```
+
+### TransFuser v6 (ArXiv report) 
+Latest version in the TransFuser series, which minimizes the asymmetry between the expert driver and the TransFuser student.
+We have fully transitioned to using the version number in the name.
+An earlier (latent) version of the model reached 2nd place in the [CVPR 2025 Waymo Vision-based End-to-End Driving Challenge](https://waymo.com/open/challenges).
+A [report](https://arxiv.org/abs/2512.20563v1) is available on ArXiv, describing all changes and the research insights.
+This paper is an extension of a master's thesis project.
+The code is available in the [LEAD repository](https://github.com/autonomousvision/lead).
+TransFuser v6 is, at the time of writing (Dec. 2025), the best model for all CARLA leaderboard 2.0 benchmarks.
+```BibTeX
+@article{Nguyen2025ARXIV,
+  author       = {Long Nguyen and Micha Fauth and Bernhard Jaeger and Daniel Dauner and Maximilian Igl and Andreas Geiger and Kashyap Chitta},
+  title        = {LEAD: Minimizing Learner-Expert Asymmetry in End-to-End Driving},
+  journal      = {ArXiv.org},
+  volume       = {2512.20563},
+  year         = {2025}
+}
+
+@mastersthesis{Nguyen2025thesis,
+  title={Addressing the Fundamental Barriers towards End-to-End Driving in Simulation},
+  author={Long Nguyen},
+  school={University of Tübingen},
+  howpublished={\textsc{url:}~\url{https://ln2697.github.io/assets/pdf/Nguyen2025Master.pdf}},
+  year={2025}
 }
 ```
