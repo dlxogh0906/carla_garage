@@ -9,6 +9,241 @@
 <b> A starter kit for the <a href="https://leaderboard.carla.org/">CARLA leaderboard 2.0</a> </b>
 </p>
 
+---
+
+## 팀 확장 레이어 (Team Extension Layer)
+
+> **이 섹션은 팀 내부용입니다.** upstream(autonomousvision) 코드를 건드리지 않고 연구 모듈을 추가·교체하는 방법을 설명합니다.
+
+### 왜 이렇게 구성했는가
+
+`team_code/`는 upstream에서 지속적으로 업데이트되는 코드입니다. 이 파일을 직접 수정하면 매번 머지 충돌이 발생합니다. 그래서 **우리 코드는 `src/garage_ext/` 안에만** 존재하며, upstream은 **import + 서브클래싱**으로만 접근합니다.
+
+```
+carla_garage/
+├── team_code/                    # upstream — 절대 직접 수정 금지
+├── src/garage_ext/               # 우리 팀 코드 전부 여기
+│   ├── agents/
+│   │   └── ext_sensor_agent.py   # SensorAgent 서브클래스 (진입점)
+│   ├── config/
+│   │   └── ext_config.py         # ExtConfig + YAML 오버레이 로더
+│   ├── modules/
+│   │   ├── base.py               # Observation/Plan/Control/RiskReport + Protocol 정의
+│   │   ├── image_enhancer/       # 카메라 이미지 전처리 모듈
+│   │   ├── vlm/                  # Vision-Language 모듈
+│   │   ├── risk/                 # 위험도 추정 모듈
+│   │   └── safety/               # 안전 필터 모듈
+│   ├── overrides/                # 불가피한 upstream 수정사항 격리 (최후 수단)
+│   ├── pipeline.py               # vlm → risk → safety 연결 파이프라인
+│   └── registry.py               # (kind, name) → class 문자열 레지스트리
+├── configs/
+│   ├── base.yaml                 # 기본값 (모든 모듈 비활성)
+│   └── experiments/              # 실험별 YAML (git 추적)
+│       ├── classic_enhance.yaml  # 이미지 보정 실험
+│       └── example_vlm_risk.yaml # VLM + 위험도 실험 템플릿
+└── docs/dev/                     # 팀 내부 개발 문서
+```
+
+---
+
+### 한 스텝당 데이터 흐름
+
+```
+카메라 프레임 (rgb_front, rgb_left, …)
+        │
+        ▼  ← _apply_image_enhancement()
+   보정된 프레임
+        │
+        ▼
+ upstream SensorAgent.run_step()  →  steer/throttle/brake
+        │
+        ▼
+ ExtPipeline.run(obs, plan, base_control):
+   1. vlm.infer(obs)          ← 선택적 VLM 추론
+   2. risk.estimate(obs, plan) ← 위험도 점수 계산
+   3. safety.filter(control, risk, obs)  ← 제어값 최종 보정
+        │
+        ▼
+   최종 control → CARLA 시뮬레이터
+```
+
+파이프라인은 upstream 인지·계획을 **대체하지 않고**, 그 위에서 **보완·감시**합니다.
+
+---
+
+### 평가 실행 방법
+
+```bash
+# 1) CARLA 서버 실행 (별도 터미널)
+cd /mnt/2/carla
+./CarlaUE4.sh -RenderOffScreen -carla-rpc-port=30000
+
+# 2) 평가 스크립트 실행
+cd /mnt/2/carla_garage
+bash Bench2Drive/leaderboard/scripts/run_evaluation_tf++_local.sh
+```
+
+**이미지 보정 켜기/끄기** — 스크립트 안의 한 줄로 조절:
+```bash
+# 켜기
+export GARAGE_EXT_CONFIG=/mnt/2/carla_garage/configs/experiments/classic_enhance.yaml
+
+# 끄기 (주석 처리하거나 줄 삭제)
+# export GARAGE_EXT_CONFIG=...
+```
+
+**시각화 저장** (`DEBUG_CHALLENGE=1`이면 `SAVE_PATH` 아래에 프레임/비교 이미지 저장):
+```bash
+export DEBUG_CHALLENGE=1
+export SAVE_PATH=/mnt/2/carla_metric_result/carla_viz
+```
+
+**평가 강제 종료**:
+```bash
+bash kill_eval.sh
+```
+
+---
+
+### 모듈 추가하는 법 (예: 새 이미지 보정기)
+
+#### 1단계 — 구현 파일 생성
+
+`src/garage_ext/modules/image_enhancer/my_enhancer.py`:
+
+```python
+import numpy as np
+from ...registry import register
+
+@register("image_enhancer", "my_enhancer")
+class MyEnhancer:
+    def __init__(self, strength: float = 1.0, **_):
+        self.strength = strength
+
+    def enhance(self, bgr_uint8: np.ndarray) -> np.ndarray:
+        # bgr_uint8: (H, W, 3) uint8 BGR 이미지를 받아 같은 shape/dtype 반환
+        return bgr_uint8  # 여기에 로직 작성
+```
+
+**인터페이스 규칙**: `enhance(bgr_uint8)` 하나만 구현하면 됩니다. 상속 불필요.
+
+#### 2단계 — `__init__.py`에 import 추가
+
+`src/garage_ext/modules/image_enhancer/__init__.py`:
+
+```python
+from . import classic   # noqa: F401
+from . import my_enhancer  # noqa: F401  ← 추가
+```
+
+#### 3단계 — 실험 YAML 작성
+
+`configs/experiments/my_enhance_run.yaml`:
+
+```yaml
+extends: ../base.yaml
+
+image_enhancer: my_enhancer
+image_enhancer_kwargs:
+  strength: 1.5
+
+meta:
+  owner: <본인 핸들>
+  tag: my-enhance-v1
+  notes: "테스트 설명"
+```
+
+#### 4단계 — 스모크 테스트 추가
+
+`tests/smoke/test_my_enhancer.py`:
+
+```python
+def test_my_enhancer_registered():
+    import garage_ext.modules  # noqa: F401
+    from garage_ext.registry import available, build
+    import numpy as np
+
+    assert "my_enhancer" in available("image_enhancer")
+    enh = build("image_enhancer", "my_enhancer", strength=2.0)
+    dummy = np.zeros((4, 4, 3), dtype=np.uint8)
+    out = enh.enhance(dummy)
+    assert out.shape == dummy.shape
+```
+
+#### 5단계 — 환경변수 설정 후 실행
+
+```bash
+export GARAGE_EXT_CONFIG=configs/experiments/my_enhance_run.yaml
+bash Bench2Drive/leaderboard/scripts/run_evaluation_tf++_local.sh
+```
+
+**upstream 코드는 한 줄도 건드리지 않습니다.**
+
+---
+
+### 다른 종류의 모듈 추가 (VLM / 위험도 / 안전 필터)
+
+같은 패턴입니다. 각 모듈이 구현해야 하는 메서드:
+
+| 종류 | 레지스트리 kind | 구현 메서드 | 위치 |
+|------|----------------|-------------|------|
+| 이미지 보정 | `image_enhancer` | `enhance(bgr_uint8) → ndarray` | `modules/image_enhancer/` |
+| VLM | `vlm` | `infer(obs: Observation) → dict` | `modules/vlm/` |
+| 위험도 추정 | `risk` | `estimate(obs, plan) → RiskReport` | `modules/risk/` |
+| 안전 필터 | `safety` | `filter(control, risk, obs) → Control` | `modules/safety/` |
+
+모든 dataclass 정의는 [`src/garage_ext/modules/base.py`](src/garage_ext/modules/base.py)에 있습니다.
+
+YAML에서 모듈 이름만 바꾸면 실험 전환 완료:
+```yaml
+extends: ../base.yaml
+vlm: my_vlm_v2
+risk: heuristic_ttc
+safety: brake_if_risk_gt_05
+```
+
+---
+
+### 비교 이미지 저장 위치
+
+`SAVE_PATH`가 설정돼 있으면 이미지 보정 전/후 비교 패널이 자동 저장됩니다:
+
+```
+$SAVE_PATH/enhance_compare/
+  scenario_000/
+    00004.png   # (4프레임마다 1장)
+    00008.png
+  scenario_001/
+    ...
+```
+
+각 PNG는 `ORIGINAL [FRONT] | ENHANCED [FRONT]` 형식의 좌우 비교 이미지입니다.
+
+---
+
+### `overrides/` 폴더 사용 규칙
+
+서브클래싱으로 해결이 **불가능한 경우에만** 사용합니다. 파일 첫 줄에 반드시 명시:
+
+```python
+# ORIGIN: team_code/<원본 경로>
+# REASON: <서브클래싱 불가 이유>
+# SYNC-CHECK: <분기 시점 upstream 커밋 해시>
+```
+
+`overrides/`가 늘어나는 건 설계 재검토 신호입니다.
+
+---
+
+### 더 읽기
+
+- [docs/dev/ARCHITECTURE.md](docs/dev/ARCHITECTURE.md) — 설계 원칙 전체
+- [docs/dev/MODULE_GUIDE.md](docs/dev/MODULE_GUIDE.md) — 모듈 추가 5단계 가이드
+- [docs/dev/CONTRIBUTING.md](docs/dev/CONTRIBUTING.md) — PR 규칙 및 브랜치 전략
+- [docs/dev/ONBOARDING.ko.md](docs/dev/ONBOARDING.ko.md) — 처음 합류한 팀원용 온보딩
+
+---
+
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/hidden-biases-of-end-to-end-driving-models/carla-leaderboard-2-0-on-carla)](https://paperswithcode.com/sota/carla-leaderboard-2-0-on-carla?p=hidden-biases-of-end-to-end-driving-models)
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/hidden-biases-of-end-to-end-driving-models/bench2drive-on-bench2drive)](https://paperswithcode.com/sota/bench2drive-on-bench2drive?p=hidden-biases-of-end-to-end-driving-models)
 
