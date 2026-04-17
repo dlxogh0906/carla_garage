@@ -1,0 +1,11 @@
+# Review ownership. Replace placeholders with GitHub handles once roles are assigned.
+# Upstream `team_code/` is intentionally not listed: we don't modify it.
+
+/src/garage_ext/modules/vlm/       @dlxogh0906
+/src/garage_ext/modules/risk/      @dlxogh0906
+/src/garage_ext/modules/safety/    @dlxogh0906
+/src/garage_ext/pipeline.py        @dlxogh0906
+/src/garage_ext/agents/            @dlxogh0906
+/configs/                          @dlxogh0906
+/docs/dev/                         @dlxogh0906
+/.github/                          @dlxogh0906

@@ -1,0 +1,8 @@
+# Baseline: no extra modules engaged. Agent behaves like upstream SensorAgent.
+vlm: null
+risk: noop
+safety: noop
+
+meta:
+  owner: TBD
+  notes: "Default experiment config. Copy to configs/experiments/<name>.yaml and edit."

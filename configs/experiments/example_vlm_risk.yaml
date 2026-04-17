@@ -1,0 +1,16 @@
+# Example: try VLM + risk estimator while safety filter stays off.
+# Running this requires GARAGE_EXT_CONFIG=configs/experiments/example_vlm_risk.yaml
+extends: ../base.yaml
+
+vlm: noop
+vlm_kwargs: {}
+
+risk: noop
+risk_kwargs: {}
+
+safety: noop
+
+meta:
+  owner: TBD
+  tag: example
+  notes: "Template showing how to swap modules via YAML. Replace 'noop' names once real impls are registered."
