@@ -9,6 +9,7 @@ import numpy as np
 
 @runtime_checkable
 class ImageEnhancer(Protocol):
-    def enhance(self, bgr_uint8: np.ndarray) -> np.ndarray:
-        """Input/output: BGR uint8 (H, W, 3)."""
-        ...
+
+  def enhance(self, bgr_uint8: np.ndarray) -> np.ndarray:
+    """Input/output: BGR uint8 (H, W, 3)."""
+    ...

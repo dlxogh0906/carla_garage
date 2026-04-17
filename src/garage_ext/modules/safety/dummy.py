@@ -12,8 +12,8 @@ from ..base import Control, Observation, RiskReport
 @register("safety", "noop")
 class NoopSafety:
 
-    def __init__(self, **_: Any) -> None:
-        pass
+  def __init__(self, **_: Any) -> None:
+    pass
 
-    def filter(self, control: Control, risk: RiskReport, obs: Observation) -> Control:
-        return control
+  def filter(self, control: Control, risk: RiskReport, obs: Observation) -> Control:
+    return control

@@ -11,8 +11,8 @@ from ..base import Observation
 @register("vlm", "noop")
 class NoopVLM:
 
-    def __init__(self, **_: Any) -> None:
-        pass
+  def __init__(self, **_: Any) -> None:
+    pass
 
-    def infer(self, obs: Observation) -> Dict[str, Any]:
-        return {}
+  def infer(self, obs: Observation) -> Dict[str, Any]:
+    return {}
