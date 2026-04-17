@@ -6,3 +6,4 @@ implementations into the global registry.
 from . import vlm  # noqa: F401
 from . import risk  # noqa: F401
 from . import safety  # noqa: F401
+from . import image_enhancer  # noqa: F401

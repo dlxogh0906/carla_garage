@@ -17,11 +17,13 @@ import yaml
 @dataclass
 class ExtConfig:
     # Module selections -> resolved via registry.build(kind, name).
+    image_enhancer: Optional[str] = None   # e.g. "classic_cv" or "noop"
     vlm: Optional[str] = None
     risk: Optional[str] = "noop"
     safety: Optional[str] = "noop"
 
     # Per-module kwargs passed through to __init__.
+    image_enhancer_kwargs: Dict[str, Any] = field(default_factory=dict)
     vlm_kwargs: Dict[str, Any] = field(default_factory=dict)
     risk_kwargs: Dict[str, Any] = field(default_factory=dict)
     safety_kwargs: Dict[str, Any] = field(default_factory=dict)

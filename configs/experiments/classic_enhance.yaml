@@ -1,0 +1,9 @@
+extends: ../base.yaml
+
+image_enhancer: classic_cv
+image_enhancer_kwargs: {}
+
+meta:
+  owner: TBD
+  tag: classic-cv-enhance
+  notes: "전방 카메라 이미지에 adaptive CV 보정 적용 (저조도/과노출/안개/흐림 자동 판별)"
