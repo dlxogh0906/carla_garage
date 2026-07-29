@@ -247,7 +247,7 @@ run_dev10() {
   export QWEN_VLM_DTYPE="$VLLM_DTYPE"
 
   log "Run=${run_id} quant=${quant_label} backend=${backend} model=${model_path}"
-  bash "${SCRIPT_DIR}/run_qwen_8meta_action_dev10.sh"
+  bash "${SCRIPT_DIR}/../eval/run_qwen_8meta_action_dev10.sh"
   summarize_one "$out_dir" "$quant_label"
 }
 

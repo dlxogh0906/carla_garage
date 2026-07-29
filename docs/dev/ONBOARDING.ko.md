@@ -248,7 +248,7 @@ A. 우리 코드는 `src/garage_ext/`에만 있으므로 충돌은 보통 `team_
 
 ## 8. 더 읽을 거리
 
-- 구조적 의도·트레이드오프: [ARCHITECTURE.md](ARCHITECTURE.md)
+- 구조적 의도·트레이드오프: [ARCHITECTURE.md](../ARCHITECTURE.md)
 - 브랜치·PR 규칙 상세: [CONTRIBUTING.md](CONTRIBUTING.md)
 - 새 모듈 추가 예제: [MODULE_GUIDE.md](MODULE_GUIDE.md)
 - 원본 프로젝트 README: [../../README.md](../../README.md)

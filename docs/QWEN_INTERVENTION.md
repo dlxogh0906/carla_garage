@@ -185,7 +185,7 @@ pip install transformers accelerate qwen-vl-utils pillow
 ### 기본 실행 (VLM 개입 활성화)
 
 ```bash
-bash /mnt/2/carla_garage/run_qwen_dev10.sh
+bash /mnt/2/carla_garage/scripts/eval/run_qwen_dev10.sh
 ```
 
 ### 옵션 오버라이드

@@ -1,7 +1,7 @@
 # TF++ + Qwen 현재 방법론 아키텍처
 
 작성 기준: 2026-04-28  
-대상 코드: `carla_garage/src/garage_ext/agents/qwen_sensor_agent.py`, `carla_garage/src/garage_ext/vlm_intervention/`, `carla_garage/run_qwen_dev10.sh`
+대상 코드: `carla_garage/src/garage_ext/agents/qwen_sensor_agent.py`, `carla_garage/src/garage_ext/vlm_intervention/`, `carla_garage/scripts/eval/run_qwen_dev10.sh`
 
 ## 1. 한 줄 요약
 

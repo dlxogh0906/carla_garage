@@ -441,7 +441,7 @@ python Bench2Drive/tools/result_parser.py \
 ### 평가 강제 종료
 
 ```bash
-bash /mnt/2/carla_garage/kill_eval.sh
+bash /mnt/2/carla_garage/scripts/eval/kill_eval.sh
 ```
 
 ---

@@ -291,13 +291,13 @@ OUT_DIR=/mnt/2/carla_metric_result/qwen_dev10_2 \
 CUDA_VISIBLE_DEVICES_LIST=0,1 \
 GPU_RANK=0 \
 QWEN_VLM_DEVICE=cuda:1 \
-bash /mnt/2/carla_garage/run_qwen_dev10.sh
+bash /mnt/2/carla_garage/scripts/eval/run_qwen_dev10.sh
 ```
 
 Make dashboard videos:
 
 ```bash
-python /mnt/2/carla_garage/make_video_from_folder.py \
+python /mnt/2/carla_garage/tools/make_video_from_folder.py \
   /mnt/2/carla_metric_result/qwen_dev10_2/viz \
   -o /mnt/2/carla_metric_result/qwen_dev10_2/dashboard_video \
   --subdir dashboard
@@ -306,7 +306,7 @@ python /mnt/2/carla_garage/make_video_from_folder.py \
 Make raw viz videos:
 
 ```bash
-python /mnt/2/carla_garage/make_video_from_folder.py \
+python /mnt/2/carla_garage/tools/make_video_from_folder.py \
   /mnt/2/carla_metric_result/qwen_dev10_2/viz \
   -o /mnt/2/carla_metric_result/qwen_dev10_2/video
 ```

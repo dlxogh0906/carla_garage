@@ -320,7 +320,7 @@ run_dev10() {
   log "OUT_DIR    : ${out_dir}"
   log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-  bash "${SCRIPT_DIR}/run_qwen_dev10.sh"
+  bash "${SCRIPT_DIR}/../eval/run_qwen_dev10.sh"
   summarize_one "$out_dir" "$quant_label"
 }
 

@@ -215,7 +215,7 @@ run_one() {
   export QWEN_RUNTIME_QUANT="${QWEN_RUNTIME_QUANT:-none}"
 
   log "Run=${run_id} quant=${quant_label} backend=${backend} model=${model_path}"
-  bash "${SCRIPT_DIR}/run_eunsu_8meta_classiccv_bench220.sh"
+  bash "${SCRIPT_DIR}/../eval/run_eunsu_8meta_classiccv_bench220.sh"
   summarize_one "$out_dir" "$quant_label"
 }
 

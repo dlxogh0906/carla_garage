@@ -76,12 +76,12 @@ src/garage_ext/               # 팀 확장 레이어 (upstream 무수정 플러�
 └── visualization/            #   판단 근거 대시보드 렌더러
 team_code/sensor_agent_meta_action*.py   # 최종 메타액션 VLA 에이전트 (전·후방, rule-hold 변형)
 tools/                        # GAWQ/GPTQ/AWQ/W8A8 양자화, LoRA layer-wise merge, 오프라인 평가·집계
-run_*.sh                      # dev10/220 평가·양자화 스위트 실행 스크립트
+scripts/eval/ · scripts/quant/     # dev10/220 평가·양자화 스위트 실행 스크립트
 docs/                         # 실험 방법론·양자화 워크로그·아키텍처 문서
 ```
 
-- 실행·재현 절차: [HANDOFF_SUMMARY.md](HANDOFF_SUMMARY.md) (인수인계 문서)
-- VLA 개입 설계: [QWEN_INTERVENTION.md](QWEN_INTERVENTION.md) · [QWEN_WORK_SUMMARY.md](QWEN_WORK_SUMMARY.md)
+- 실행·재현 절차: [HANDOFF_SUMMARY.md](docs/HANDOFF_SUMMARY.md) (인수인계 문서)
+- VLA 개입 설계: [QWEN_INTERVENTION.md](docs/QWEN_INTERVENTION.md) · [QWEN_WORK_SUMMARY.md](docs/QWEN_WORK_SUMMARY.md)
 - 양자화 실험 기록: [docs/qwen_quantization_summary.md](docs/qwen_quantization_summary.md)
 
 ## Upstream (TransFuser++ / carla_garage)
@@ -180,7 +180,7 @@ export SAVE_PATH=/mnt/2/carla_metric_result/carla_viz
 
 **평가 강제 종료**:
 ```bash
-bash kill_eval.sh
+bash scripts/eval/kill_eval.sh
 ```
 
 ---
