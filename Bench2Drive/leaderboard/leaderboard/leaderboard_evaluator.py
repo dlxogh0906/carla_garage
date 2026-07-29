@@ -206,7 +206,8 @@ class LeaderboardEvaluator(object):
         """
         self.carla_path = os.environ["CARLA_ROOT"]
         args.port = find_free_port(args.port)
-        cmd1 = f"{os.path.join(self.carla_path, 'CarlaUE4.sh')} -RenderOffScreen -nosound -carla-rpc-port={args.port} -graphicsadapter={args.gpu_rank}"
+        quality_level = os.environ.get("CARLA_QUALITY_LEVEL", "Epic")
+        cmd1 = f"{os.path.join(self.carla_path, 'CarlaUE4.sh')} -RenderOffScreen -nosound -carla-rpc-port={args.port} -graphicsadapter={args.gpu_rank} -quality-level={quality_level}"
         self.server = subprocess.Popen(cmd1, shell=True, preexec_fn=os.setsid)
         print(cmd1, self.server.returncode, flush=True)
         atexit.register(os.killpg, self.server.pid, signal.SIGKILL)
@@ -367,7 +368,7 @@ class LeaderboardEvaluator(object):
             self.agent_instance = agent_class_obj(args.host, args.port, args.debug)
             self.agent_instance.set_global_plan(self.route_scenario.gps_route, self.route_scenario.route)
             args.agent_config = args.agent_config + '+' + save_name
-            self.agent_instance.setup(args.agent_config)
+            self.agent_instance.setup(args.agent_config, route_index=route_name)
 
             # Check and store the sensors
             if not self.sensors:

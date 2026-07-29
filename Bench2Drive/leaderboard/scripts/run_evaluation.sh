@@ -23,7 +23,8 @@ export TEAM_AGENT=$5
 export TEAM_CONFIG=$6
 export CHECKPOINT_ENDPOINT=$7
 export SAVE_PATH=$8
+export LEADERBOARD_PYTHON=${LEADERBOARD_PYTHON:-python}
 
-echo -e "CUDA_VISIBLE_DEVICES=${GPU_RANK} python ${LEADERBOARD_ROOT}/leaderboard/leaderboard_evaluator.py --routes=${ROUTES} --repetitions=${REPETITIONS} --track=${CHALLENGE_TRACK_CODENAME} --checkpoint=${CHECKPOINT_ENDPOINT} --agent=${TEAM_AGENT} --agent-config=${TEAM_CONFIG} --debug=${DEBUG_CHALLENGE} --record=${RECORD_PATH} --resume=${RESUME} --port=${PORT} --traffic-manager-port=${TM_PORT} --gpu-rank=${GPU_RANK}"
+echo -e "CUDA_VISIBLE_DEVICES=${GPU_RANK} ${LEADERBOARD_PYTHON} ${LEADERBOARD_ROOT}/leaderboard/leaderboard_evaluator.py --routes=${ROUTES} --repetitions=${REPETITIONS} --track=${CHALLENGE_TRACK_CODENAME} --checkpoint=${CHECKPOINT_ENDPOINT} --agent=${TEAM_AGENT} --agent-config=${TEAM_CONFIG} --debug=${DEBUG_CHALLENGE} --record=${RECORD_PATH} --resume=${RESUME} --port=${PORT} --traffic-manager-port=${TM_PORT} --gpu-rank=${GPU_RANK}"
 
-CUDA_VISIBLE_DEVICES=${GPU_RANK} python "${LEADERBOARD_ROOT}"/leaderboard/leaderboard_evaluator.py --routes="${ROUTES}" --repetitions=${REPETITIONS} --track=${CHALLENGE_TRACK_CODENAME} --checkpoint="${CHECKPOINT_ENDPOINT}" --agent="${TEAM_AGENT}" --agent-config="${TEAM_CONFIG}" --debug=${DEBUG_CHALLENGE} --record="${RECORD_PATH}" --resume=${RESUME} --port="${PORT}" --traffic-manager-port="${TM_PORT}" --gpu-rank="${GPU_RANK}" \
+CUDA_VISIBLE_DEVICES=${GPU_RANK} "$LEADERBOARD_PYTHON" "${LEADERBOARD_ROOT}"/leaderboard/leaderboard_evaluator.py --routes="${ROUTES}" --repetitions=${REPETITIONS} --track=${CHALLENGE_TRACK_CODENAME} --checkpoint="${CHECKPOINT_ENDPOINT}" --agent="${TEAM_AGENT}" --agent-config="${TEAM_CONFIG}" --debug=${DEBUG_CHALLENGE} --record="${RECORD_PATH}" --resume=${RESUME} --port="${PORT}" --traffic-manager-port="${TM_PORT}" --gpu-rank="${GPU_RANK}" \

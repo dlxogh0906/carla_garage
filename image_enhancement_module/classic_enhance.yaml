@@ -1,0 +1,9 @@
+extends: ../configs/base.yaml
+
+image_enhancer: classic_cv
+image_enhancer_kwargs: {}
+
+meta:
+  owner: TBD
+  tag: classic-cv-enhance
+  notes: "Adaptive CV image enhancement: low-light / over-exposed / haze / blurry."

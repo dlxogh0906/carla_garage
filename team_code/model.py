@@ -21,6 +21,62 @@ import os
 from nav_planner import LateralPIDController, get_throttle
 
 
+def _as_uint8_rgb(image):
+  image = np.asarray(image)
+  if image.ndim == 2:
+    image = np.repeat(image[:, :, None], 3, axis=2)
+  if image.shape[2] > 3:
+    image = image[:, :, :3]
+  if image.dtype != np.uint8:
+    image = np.clip(image, 0, 255).astype(np.uint8)
+  return image
+
+
+def _pad_image(image, target_height=None, target_width=None, fill_value=255):
+  image = _as_uint8_rgb(image)
+  height, width = image.shape[:2]
+  target_height = max(height, int(target_height or height))
+  target_width = max(width, int(target_width or width))
+  if target_height == height and target_width == width:
+    return image
+  canvas = np.full((target_height, target_width, 3), fill_value, dtype=np.uint8)
+  canvas[:height, :width] = image
+  return canvas
+
+
+def _compose_debug_visualization(rgb_image, bev_image):
+  """Compose DEBUG_CHALLENGE output.
+
+  TFPP_VIZ_LAYOUT=wide saves a large front camera and smaller BEV side-by-side.
+  TFPP_VIZ_LAYOUT=vertical keeps the original front-over-BEV format.
+  """
+  rgb_image = _as_uint8_rgb(rgb_image)
+  bev_image = _as_uint8_rgb(bev_image)
+  layout = os.environ.get('TFPP_VIZ_LAYOUT', 'wide').strip().lower()
+  if layout in ('vertical', 'v', 'stacked'):
+    target_width = max(rgb_image.shape[1], bev_image.shape[1])
+    return np.concatenate((
+        _pad_image(rgb_image, target_width=target_width),
+        _pad_image(bev_image, target_width=target_width),
+    ), axis=0)
+
+  if layout in ('horizontal_equal', 'equal', 'h_equal'):
+    target_height = max(rgb_image.shape[0], bev_image.shape[0])
+    return np.concatenate((
+        _pad_image(rgb_image, target_height=target_height),
+        _pad_image(bev_image, target_height=target_height),
+    ), axis=1)
+
+  target_height = max(1, int(os.environ.get('TFPP_VIZ_HEIGHT', '768')))
+  front_width = max(1, int(round(rgb_image.shape[1] * target_height / rgb_image.shape[0])))
+  front_panel = cv2.resize(rgb_image, (front_width, target_height), interpolation=cv2.INTER_LINEAR)
+  bev_panel = cv2.resize(bev_image, (target_height, target_height), interpolation=cv2.INTER_AREA)
+  return np.concatenate((
+      front_panel,
+      bev_panel,
+  ), axis=1)
+
+
 class LidarCenterNet(nn.Module):
   """
   The main model class. It can run all model configurations.
@@ -881,7 +937,7 @@ class LidarCenterNet(nn.Module):
       cv2.putText(images_lidar, f'Pred TS: {pred_target_speed_scalar:.2f}', (10, 660), cv2.FONT_HERSHEY_SIMPLEX, 1,
                   (0, 0, 0), 1, cv2.LINE_AA)
 
-    all_images = np.concatenate((rgb_image, images_lidar), axis=0)
+    all_images = _compose_debug_visualization(rgb_image, images_lidar)
     all_images = Image.fromarray(all_images.astype(np.uint8))
 
     store_path = str(str(save_path) + (f'/{step:04}.png'))

@@ -14,6 +14,7 @@ from __future__ import print_function
 import signal
 import sys
 import time
+import os
 
 import py_trees
 import carla
@@ -75,6 +76,7 @@ class ScenarioManager(object):
         self._statistics_manager = statistics_manager
 
         self.tick_count = 0
+        self._max_game_time = float(os.environ.get("CARLA_MAX_GAME_TIME_SECONDS", "0") or 0)
 
         # Use the callback_id inside the signal handler to allow external interrupts
         signal.signal(signal.SIGINT, self.signal_handler)
@@ -177,6 +179,12 @@ class ScenarioManager(object):
             GameTime.on_carla_tick(timestamp)
             CarlaDataProvider.on_carla_tick()
             self.tick_count += 1
+            if self._max_game_time > 0 and (GameTime.get_time() - self.start_game_time) >= self._max_game_time:
+                print(
+                    f"[ScenarioManager] max game time reached: {self._max_game_time:.1f}s",
+                    flush=True,
+                )
+                self._running = False
             self._watchdog.pause()
 
             if self.tick_count > 4000:

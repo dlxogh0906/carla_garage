@@ -50,8 +50,8 @@ fi
 
 echo -e "**************\033[36m Please Manually adjust GPU or TASK_ID \033[0m **************"
 # Example, 8*H100, 1 task per gpu
-GPU_RANK_LIST=(0)
-TASK_LIST=(0)
+GPU_RANK_LIST=(0 0 0)
+TASK_LIST=(1 2 3)
 echo -e "\033[32m GPU_RANK_LIST: $GPU_RANK_LIST \033[0m"
 echo -e "\033[32m TASK_LIST: $TASK_LIST \033[0m"
 echo -e "***********************************************************************************"
