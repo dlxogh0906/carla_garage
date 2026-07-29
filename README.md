@@ -84,16 +84,6 @@ docs/                         # 실험 방법론·양자화 워크로그·아키
 - VLA 개입 설계: [QWEN_INTERVENTION.md](QWEN_INTERVENTION.md) · [QWEN_WORK_SUMMARY.md](QWEN_WORK_SUMMARY.md)
 - 양자화 실험 기록: [docs/qwen_quantization_summary.md](docs/qwen_quantization_summary.md)
 
-## 팀 자비스 (JARVIS)
-
-| 이름 | 역할 |
-|---|---|
-| 오은수 (팀장) | 이미지 보정 모듈 설계·구현, 학술대회 논문 작성·발표, 프로젝트 방향 관리, 시스템 구조도 |
-| 이태호 | VLM 후방 입력 추가 실험, 통합 파이프라인 실험, **Layer-wise Merge 방법론 제안** 및 양자화 비교 실험, 논문 분석 |
-| 강설아 | 교통사고 통계·위험요인 조사, VLM 후보 모델 비교, LoRA 계열 성능 비교, 연구·논문 분석 |
-| 이다영 | 대시보드·웹 인터페이스 구현, VLA 방법론 구현, 데이터셋 구조 분석, LoRA 파인튜닝·결과 시각화 |
-| 박한슬 | VLM 후방 입력 추가 실험, 통합 파이프라인 실험, LoRA 파인튜닝, **GAWQ 양자화 방법론 제안**·실험, 앱 구현 |
-
 ## Upstream (TransFuser++ / carla_garage)
 
 이 저장소는 [autonomousvision/carla_garage](https://github.com/autonomousvision/carla_garage)의 포크입니다. TransFuser++ 학습·데이터셋 생성·리더보드 제출 등 원본 사용법은 업스트림 README를 참고하세요. 아래 팀 확장 레이어 섹션은 upstream 코드를 수정하지 않고 우리 모듈을 얹는 방법을 설명합니다.
